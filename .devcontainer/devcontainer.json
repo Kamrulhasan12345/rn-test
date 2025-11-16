@@ -6,7 +6,5 @@
       "version": "latest"
     }
   },
-  "containerEnv": {
-    "PATH": "$PATH:/usr/local/lib/android/cmdline-tools/latest/bin:/usr/local/lib/android/platform-tools:/usr/local/lib/android/build-tools/34.0.0"
-  }
+  "postCreateCommand": "echo 'export PATH=$PATH:/usr/local/lib/android/platform-tools' >> ~/.bashrc"
 }
