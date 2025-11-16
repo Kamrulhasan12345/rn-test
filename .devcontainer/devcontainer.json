@@ -1,7 +1,12 @@
 {
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
-	"features": {
-		"ghcr.io/nordcominc/devcontainer-features/android-sdk:1": {},
-		"ghcr.io/devcontainers-extra/features/tailscale:1": {}
-	}
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/nordcominc/devcontainer-features/android-sdk:1": {},
+    "ghcr.io/tailscale/codespace/tailscale": {
+      "version": "latest"
+    }
+  },
+  "containerEnv": {
+    "PATH": "$PATH:/usr/local/lib/android/cmdline-tools/latest/bin:/usr/local/lib/android/platform-tools:/usr/local/lib/android/build-tools/34.0.0"
+  }
 }
