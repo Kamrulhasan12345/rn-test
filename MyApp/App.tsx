@@ -1,49 +1,51 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { Button } from '@react-navigation/elements';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Alert, Button, Pressable, StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import NotesList from './screens/notes-list';
+import NoteDetails from './screens/note-details';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
-const Tab = createBottomTabNavigator();
+type RootStackParamList = {
+  Notes: undefined;
+  NoteDetail: { id: number }
+};
 
-function MyTabs() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
-  );
-}
+type Props = NativeStackScreenProps<RootStackParamList, 'NoteDetail'>;
 
-function HomeScreen() {
-  const navigation = useNavigation();
+export type NoteDetailNavigationProp = Props['navigation']
 
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button onPress={() => navigation.navigate('Profile' as never)}>
-        Go to Profile
-      </Button>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  const navigation = useNavigation();
-
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Profile Screen</Text>
-      <Button onPress={() => navigation.navigate('Home' as never)}>Go to Home</Button>
-    </View>
-  );
-}
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
+  const isDarkMode = useColorScheme() === 'dark';
+
   return (
-    <NavigationContainer>
-      <MyTabs />
-      {/* <Text>App</Text> */}
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <Stack.Navigator>
+          <Stack.Screen
+            name='Notes'
+            component={NotesList}
+            options={{
+              headerRight: () => <Pressable onPress={() => Alert.alert('Created!')} style={styles.iconButton}>
+                <Ionicons name='add' size={24} color='#fff' />
+              </Pressable>
+            }}
+          />
+          <Stack.Screen name='NoteDetail' component={NoteDetails} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  iconButton: {
+    backgroundColor: "#007AFF",
+    borderRadius: 20,
+    padding: 8
+  },
+});
