@@ -8,12 +8,14 @@ import { getTheme } from "../theme";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { NoteListNavigationProp } from "../App";
+import { useAuth } from "../hooks/useAuth";
 
 export default function NotesList() {
   const [notes, setNotes] = useState<Note[]>(() => getAllNotes());
   const scheme = useColorScheme();
   const theme = getTheme(scheme);
   const navigation = useNavigation<NoteListNavigationProp>();
+  const { logoutMutation } = useAuth();
 
   useEffect(() => {
     const listener = storage.addOnValueChangedListener(() => {
@@ -29,6 +31,22 @@ export default function NotesList() {
 
   return (
     <View style={styles(theme).container}>
+      <View style={styles(theme).topBar}>
+        <Text style={styles(theme).topBarTitle}>My Notes</Text>
+        <Pressable
+          onPress={() => logoutMutation.mutate()}
+          style={styles(theme).logoutButton}
+          disabled={logoutMutation.isPending}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+        >
+          <Ionicons name="log-out-outline" size={18} color={theme.colors.primary} />
+          <Text style={styles(theme).logoutText}>
+            {logoutMutation.isPending ? "Logging out..." : "Logout"}
+          </Text>
+        </Pressable>
+      </View>
+
       <MasonryList
         data={notes}
         keyExtractor={(item) => `${item.id}-${scheme || 'light'}`}
@@ -94,6 +112,32 @@ const styles = (theme: ReturnType<typeof getTheme>) =>
     emptySub: {
       color: theme.colors.subtext,
       marginBottom: theme.spacing.sm,
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.lg,
+      paddingBottom: theme.spacing.sm,
+    },
+    topBarTitle: {
+      fontSize: 22,
+      fontWeight: "700",
+      color: theme.colors.text,
+    },
+    logoutButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: theme.radius.pill,
+      backgroundColor: theme.colors.elevated,
+    },
+    logoutText: {
+      color: theme.colors.primary,
+      fontWeight: "600",
     },
     cta: {
       flexDirection: "row",
